@@ -8,20 +8,19 @@ Humanity is faced with many challenges to sustain life on Ferros:
 * Communication
 * Transport
 
-The advent of **birdy** will make communication problems a thing of the past!
+The advent of **Birdy** will make communication problems a thing of the past!
 
-
-
-
-birdy is the communication of the future on ferros!
-
-- [More About birdy](#more-about-tidyeducation)
+- [More About birdy](#more-birdy)
 - [License](#license)
 
 ## More About birdy
 
-This is how birdy works!
+**Birdy** is an infrared radiation (IR) device used for communication on-the-go!
+
+IR is unaffected by the magnetic field of Ferros, making it the ideal solution for this new planet.
+
+IR messages sent on-the-go on the **Birdy** are encoded in ASCII to a stationary device to whoever you want to communicate with!
 
 ## License
 
-birdy has a BSD-style license, as found in the [LICENSE](LICENSE) file.
+birdy has an MIT license, as found in the [LICENSE](LICENSE) file.
