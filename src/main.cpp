@@ -7,7 +7,7 @@ const int sensor_pin = A0;
 // LCD object
 LiquidCrystal lcd(2, 3, 4, 5, 6, 7);
 
-// Variables for baseline voltage update
+// Baseline voltage update variables
 unsigned long time_interval = 10000;
 unsigned long previous_time = 0;
 float baseline_voltage = 0;
@@ -18,38 +18,38 @@ const int bits_per_message = 12;
 bool bits[bits_per_message];
 int bit_index = 0;
 bool recording = false;
+bool message_started = false;
 
-// IDs
-int 
+// Store messages per sender ID (IDs 0–7)
+String messages_by_id[8];
 
-// Function to convert bit sequence to ASCII character
-char bits_to_char(bool bits[], int length) {
-  char result = 0;
+// Current sender ID for the active message
+int current_sender_id = -1;
+
+// Bits to integer
+int bits_to_int(bool bits[], int start, int length) {
+  int value = 0;
   for (int i = 0; i < length; i++) {
-    result |= bits[i] << (length - 1 - i);
+    value |= bits[start + i] << (length - 1 - i);
   }
-  return result;
+  return value;
 }
 
-void setup(){
-  // Set up connection to computer
+void setup() {
   Serial.begin(9600);
-
-  // IR receiver connection
   pinMode(sensor_pin, INPUT);
+  lcd.begin(16, 2);
 }
 
-
-void loop(){
-  // Update baseline voltage every 10 seconds
+void loop() {
   unsigned long current_time = millis();
-  if (current_time - previous_time > time_interval || previous_time == 0) {
+
+  // Only update baseline if not recording
+  if (!recording && (current_time - previous_time > time_interval || previous_time == 0)) {
     previous_time = current_time;
     float total_voltage = 0;
     for (int i = 0; i < num_readings; i++) {
-      int sensor_val = analogRead(sensor_pin);
-      float voltage_sample = (sensor_val / 1023.0) * 5.0;
-      total_voltage += voltage_sample;
+      total_voltage += (analogRead(sensor_pin) / 1023.0) * 5.0;
       delay(10);
     }
     baseline_voltage = total_voltage / num_readings;
@@ -57,24 +57,21 @@ void loop(){
     Serial.println(baseline_voltage);
   }
 
-  // Read current voltage
+  // Read voltage
   int sensor_val = analogRead(sensor_pin);
   float voltage = (sensor_val / 1023.0) * 5.0;
 
-  if (!recording) {
-    // Detect start of message (bit 1)
-    if (voltage > baseline_voltage) {
-      recording = true;
-      bit_index = 0;
-      Serial.println("Message started");
-    }
+  // Start message if high bit detected
+  if (!recording && voltage > baseline_voltage) {
+    recording = true;
+    message_started = true;
+    bit_index = 0;
+    current_sender_id = -1; // Reset current sender
+    Serial.println("Message started");
   }
 
   if (recording) {
-    // Read bit: 1 if voltage > baseline, else 0
     bool bit = (voltage > baseline_voltage) ? 1 : 0;
-
-    // Store bit
     bits[bit_index] = bit;
     bit_index++;
 
@@ -83,41 +80,48 @@ void loop(){
     Serial.print(": ");
     Serial.println(bit);
 
-    delay(200); // Small delay between bits to avoid reading too fast
+    delay(1000);  // avoid reading too fast
 
     if (bit_index >= bits_per_message) {
-      // Decode and print character
-      char decoded_char = bits_to_char(bits, bits_per_message);
-      Serial.print("Decoded char: ");
-      Serial.println(decoded_char);
+      bit_index = 0;
 
-      // Reset for next message
-      recording = false;
+      int ascii_val = bits_to_int(bits, 1, 8);
+      char decoded_char = static_cast<char>(ascii_val);
+      int sender_id = bits_to_int(bits, 9, 3);
+
+      if (current_sender_id == -1) {
+        current_sender_id = sender_id; // Lock ID for this message session
+      }
+
+      Serial.print("Character: ");
+      Serial.println(decoded_char);
+      Serial.print("Sender ID: ");
+      Serial.println(sender_id);
+      
+
+      // Encode EOT
+      if (ascii_val == 4) { // EOT
+        Serial.println("End of Transmission (EOT) detected.");
+        Serial.print("Full Message from ID ");
+        Serial.print(current_sender_id);
+        Serial.print(": ");
+        Serial.println(messages_by_id[current_sender_id]);
+
+        // Display on LCD
+        lcd.clear();
+        lcd.setCursor(0, 0);
+        lcd.print("From ");
+        lcd.print(current_sender_id);
+        lcd.setCursor(0, 1);
+        lcd.print(messages_by_id[current_sender_id]);
+
+        // Reset session state
+        recording = false;
+        message_started = false;
+        current_sender_id = -1;
+      } else {
+        messages_by_id[sender_id] += decoded_char;
+      }
     }
   }
 }
-
-// void loop(){
-//   // IR receiver value
-//   int sensor_val = analogRead(sensor_pin);
-//   float voltage = (sensor_val /1023.0) * 5.0;
-
-//   // Update baseline voltage every 10 seconds
-//   unsigned long current_time = millis();
-//   float total_voltage = 0;
-//   if (current_time - previous_time > time_interval || previous_time == 0) {
-//     previous_time = current_time;
-//     for (int i = 0; i < num_readings; i++) {
-//       total_voltage += voltage;
-//       delay(10);
-//     }
-//     baseline_voltage = total_voltage / num_readings;
-//   }
-  
-//   // Receives first bit then records message
-//   bool bit = 0;
-//   if (voltage > baseline_voltage) {
-//     bit = 1;
-//     Serial.println(bit);
-//   }
-// }
