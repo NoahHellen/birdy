@@ -1,4 +1,4 @@
-# birdy <img src="figures/logo.png" align="right" height="138" /></a>
+# birdy <img src="figures/birdy.png" align="right" height="138" /></a>
 
 birdy is the communication of the future on ferros!
 
