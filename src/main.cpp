@@ -16,7 +16,7 @@ const int num_readings = 10;
 // Bit threshold
 int threshold = 1;
 
-// IR signal recieve rate
+// Baud rate
 float receive_rate = 1000;
 
 // Message settings
@@ -24,14 +24,13 @@ const int bits_per_msg = 12;
 bool bits[bits_per_msg];
 int bit_index = 0;
 bool recording = false;
-bool message_started = false;
 
 // Message storage
 String msgs_by_id[8];
 bool has_msg[8] = {false};
 int curr_id = -1;
 
-// Convert bit array to int
+// Convert bit sequence to int
 int bits_to_int(bool bits[], int start, int length) {
   int value = 0;
   for (int i = 0; i < length; i++) {
@@ -69,7 +68,6 @@ void loop() {
   // Start message if high bit detected
   if (!recording && volt > base_volt + threshold) {
     recording = true;
-    message_started = true;
     bit_index = 0;
     curr_id = -1;
     Serial.println("Message started");
@@ -80,11 +78,13 @@ void loop() {
     bits[bit_index] = bit;
     bit_index++;
 
+    // Print recorded bit on Serial
     Serial.print("Bit ");
     Serial.print(bit_index);
     Serial.print(": ");
     Serial.println(bit);
 
+    // Baud rate
     delay(receive_rate);
 
     if (bit_index >= bits_per_msg) {
@@ -98,15 +98,19 @@ void loop() {
         curr_id = sender_id;
       }
 
+      // Print recorded character on Serial
       Serial.print("Character: ");
       Serial.println(decoded_char);
       Serial.print("Sender ID: ");
       Serial.println(sender_id);
 
-      if (ascii_val == 4) { // EOT
+      // End of transmission (EOT)
+      if (ascii_val == 4) {
         Serial.println("End of Transmission (EOT) detected.");
 
         Serial.println("----- All Messages -----");
+
+        // Print on Serial
         for (int i = 0; i < 8; i++) {
           if (has_msg[i]) {
             Serial.print("ID ");
@@ -116,6 +120,7 @@ void loop() {
           }
         }
 
+        // Print on LCD
         for (int i = 0; i < 8; i++) {
           if (has_msg[i]) {
             lcd.clear();
@@ -126,6 +131,7 @@ void loop() {
             String msg = msgs_by_id[i];
             int len = msg.length();
 
+            // Scrolling on LCD if msg too long
             if (len <= 16) {
               lcd.setCursor(0, 1);
               lcd.print(msg);
@@ -142,9 +148,10 @@ void loop() {
         }
 
         recording = false;
-        message_started = false;
         curr_id = -1;
-      } else {
+      } 
+      // Add characters to message matrix
+      else {
         msgs_by_id[sender_id] += decoded_char;
         has_msg[sender_id] = true;
       }
