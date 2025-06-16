@@ -25,7 +25,7 @@ Messages are targeted: choose the bit sequence corresponding to the recipient an
 
 ## Ferros
 
-<img src="figures/ferros.png"/></a>
+<img src="figures/ferros.jpg"/></a>
 
 ## License
 
