@@ -10,7 +10,8 @@ Humanity is faced with many challenges to sustain life on Ferros:
 
 The advent of **Birdy** will make communication problems a thing of the past!
 
-- [More about birdy](#more-birdy)
+- [More about Birdy](#more-about-birdy)
+- [Ferros](#ferros)
 - [License](#license)
 
 ## More about birdy
