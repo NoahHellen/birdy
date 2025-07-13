@@ -4,3 +4,4 @@
 .vscode/launch.json
 .vscode/ipch
 /other/
+.pre-commit-config.yaml

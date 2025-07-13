@@ -1,4 +1,4 @@
-namespace birdy { 
+namespace birdy {
 namespace {
 
 // Converts a range of bits in an array to an integer.
@@ -11,4 +11,4 @@ int BitsToInt(bool bits[], int start, int length) {
   return integer;
 }
 } // namespace
-} // namesapce birdy
+} // namespace birdy
