@@ -14,8 +14,7 @@ constexpr int kTimeInterval = 10000;
 // Sample size for baseline voltage average.
 constexpr int kNumReadings = 10;
 
-// Voltage margin added to baseline to reliably detect message start, filtering
-// out noise.
+// Voltage margin added to baseline to detect transmission start.
 constexpr float kVoltageMargin = 0.01f;
 
 // Length of each bit sequence;
@@ -32,7 +31,9 @@ constexpr int kMaxCharacters = 128;
 
 // Contains decoded character and sender ID of bit sequence.
 // Example:
-//
+// 		DecodedSequence ds;
+// 		ds.character = 'a'
+//		ds.sender_id = 1
 struct DecodedSequence {
   char character;
   int sender_id;
@@ -50,6 +51,4 @@ void StoreDecodedSequence(int sender_id, char character, int *character_index,
 void EndOfTransmission(char character, int *character_index, bool &recording,
                        LiquidCrystal &lcd,
                        char message_storage[kNumberOfUsers][kMaxCharacters]);
-
-// const char *arr[2][2] = {{"hello", "again"}, {"hello", "again"}};
 } // namespace birdy

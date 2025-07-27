@@ -28,12 +28,10 @@ void UpdateBaseVoltage(unsigned long current_time, unsigned long &previous_time,
       delay(10);
     }
     base_voltage = voltage_sum / kNumReadings;
-    Serial.print("Updated baseline voltage: ");
-    Serial.println(base_voltage);
   }
 }
 
-// Starts process of decoding message by changing `recording` to true
+// Starts process of decoding message_per_id by changing `recording` to true
 // if `current_voltage` breaks threshold.
 void RecordingStarted(bool &recording, float current_voltage,
                       float base_voltage) {
@@ -54,10 +52,6 @@ DecodedSequence DecodeSequence(float current_voltage, float base_voltage) {
     bool bit = (current_voltage > base_voltage + kVoltageMargin) ? 1 : 0;
     bits[bit_index] = bit;
     bit_index++;
-    Serial.print("Bit ");
-    Serial.print(bit_index);
-    Serial.print(": ");
-    Serial.println(bit);
     delay(kBitRate);
   }
   ds.character = static_cast<char>(BitsToInt(bits, 1, 8));
@@ -65,8 +59,8 @@ DecodedSequence DecodeSequence(float current_voltage, float base_voltage) {
   return ds;
 }
 
-// Stores decoded `character` in the relevant `sender_id` row in message storage
-// matrix, with column dependent on number of characters already in row.
+// Stores decoded `character` in the relevant `sender_id` row in message_per_id
+// storage matrix, with column dependent on number of characters already in row.
 void StoreDecodedSequence(
     int sender_id, char character, int *character_index,
     char message_storage[kNumberOfUsers][kMaxCharacters]) {
@@ -82,18 +76,17 @@ void EndOfTransmission(char character, int *character_index, bool &recording,
                        LiquidCrystal &lcd,
                        char message_storage[kNumberOfUsers][kMaxCharacters]) {
   if ((int)character == 4) {
-    Serial.print("End of transmission");
     for (int i = 0; i < kNumberOfUsers; i++) {
       lcd.clear();
       lcd.setCursor(0, 0);
       lcd.print("From ");
       lcd.print(i);
       lcd.setCursor(0, 1);
-      String message = "";
+      String message_per_id = "";
       for (int j = 0; j < character_index[i]; j++) {
-        message += message_storage[i][j];
+        message_per_id += message_storage[i][j];
       }
-      lcd.print(message);
+      lcd.print(message_per_id);
       delay(2000);
     }
     for (int i = 0; i < kNumberOfUsers; i++) {
