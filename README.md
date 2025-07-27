@@ -2,7 +2,7 @@
 
 Birdy is an infrared communication system built using Arduino.
 
-## More about Birdy
+## More information
 
 Birdy is comprised of two components:
 
