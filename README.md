@@ -1,6 +1,6 @@
 # birdy <img src="images/birdy.png" align="right" height="138" /></a>
 
-Birdy is an communication system built using Arduino.
+Birdy is an communication system built using Arduino and ESP.
 
 ## More information
 
