@@ -1,7 +1,7 @@
 #include "utils.h"
 #include <Arduino.h>
 
-namespace birdy {
+namespace nest {
 
 // Converts a range of bits in an array to an integer.
 // The conversion starts at index `start` and uses `length` bits.
@@ -28,12 +28,12 @@ void UpdateBaseVoltage(unsigned long current_time, unsigned long &previous_time,
       delay(10);
     }
     base_voltage = voltage_sum / kNumReadings;
-    Serial.print("Updated baseline voltage: ");
+    Serial.print("Base voltage:");
     Serial.println(base_voltage);
   }
 }
 
-// Starts process of decoding message by changing `recording` to true
+// Starts process of decoding message_per_id by changing `recording` to true
 // if `current_voltage` breaks threshold.
 void RecordingStarted(bool &recording, float current_voltage,
                       float base_voltage) {
@@ -52,21 +52,23 @@ DecodedSequence DecodeSequence(float current_voltage, float base_voltage) {
   while (bit_index < kBitsPerMessage) {
     float current_voltage = ComputeVoltage();
     bool bit = (current_voltage > base_voltage + kVoltageMargin) ? 1 : 0;
+    Serial.print("Bit: ");
+    Serial.println(bit);
     bits[bit_index] = bit;
     bit_index++;
-    Serial.print("Bit ");
-    Serial.print(bit_index);
-    Serial.print(": ");
-    Serial.println(bit);
     delay(kBitRate);
   }
   ds.character = static_cast<char>(BitsToInt(bits, 1, 8));
   ds.sender_id = BitsToInt(bits, 9, 3);
+  Serial.print("Character: ");
+  Serial.println(ds.character);
+  Serial.print("Sender: ");
+  Serial.print(ds.sender_id);
   return ds;
 }
 
-// Stores decoded `character` in the relevant `sender_id` row in message storage
-// matrix, with column dependent on number of characters already in row.
+// Stores decoded `character` in the relevant `sender_id` row in message
+// storage matrix, with column dependent on number of characters already in row.
 void StoreDecodedSequence(
     int sender_id, char character, int *character_index,
     char message_storage[kNumberOfUsers][kMaxCharacters]) {
@@ -82,18 +84,18 @@ void EndOfTransmission(char character, int *character_index, bool &recording,
                        LiquidCrystal &lcd,
                        char message_storage[kNumberOfUsers][kMaxCharacters]) {
   if ((int)character == 4) {
-    Serial.print("End of transmission");
+    Serial.println("EOT detected");
     for (int i = 0; i < kNumberOfUsers; i++) {
       lcd.clear();
       lcd.setCursor(0, 0);
       lcd.print("From ");
       lcd.print(i);
       lcd.setCursor(0, 1);
-      String message = "";
+      String message_per_id = "";
       for (int j = 0; j < character_index[i]; j++) {
-        message += message_storage[i][j];
+        message_per_id += message_storage[i][j];
       }
-      lcd.print(message);
+      lcd.print(message_per_id);
       delay(2000);
     }
     for (int i = 0; i < kNumberOfUsers; i++) {
@@ -103,4 +105,4 @@ void EndOfTransmission(char character, int *character_index, bool &recording,
     recording = false;
   }
 }
-} // namespace birdy
+} // namespace nest

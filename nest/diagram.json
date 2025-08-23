@@ -1,0 +1,88 @@
+{
+  "version": 1,
+  "author": "Uri Shaked",
+  "editor": "wokwi",
+  "parts": [
+    {
+      "type": "wokwi-arduino-uno",
+      "id": "uno",
+      "top": 183,
+      "left": 18.6,
+      "attrs": {}
+    },
+    {
+      "type": "wokwi-lcd1602",
+      "id": "lcd1",
+      "top": -236.57,
+      "left": 16,
+      "attrs": {}
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "r1",
+      "top": -52.8,
+      "left": 153.05,
+      "rotate": 90,
+      "attrs": { "value": "16600" }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "r2",
+      "top": 302.4,
+      "left": -134.95,
+      "rotate": 90,
+      "attrs": { "value": "120000" }
+    },
+    {
+      "type": "wokwi-ir-receiver",
+      "id": "ir1",
+      "top": 152.25,
+      "left": -126.58,
+      "attrs": {}
+    },
+    {
+      "type": "wokwi-potentiometer",
+      "id": "pot1",
+      "top": -174.1,
+      "left": -144.2,
+      "attrs": {}
+    }
+  ],
+  "connections": [
+    ["r1:1", "lcd1:A", "green", ["h0"]],
+    [
+      "uno:5V",
+      "r1:2",
+      "red",
+      ["v19.1", "h-169", "v-374.4", "h105.6", "v-37.2"]
+    ],
+    [
+      "lcd1:K",
+      "uno:GND.2",
+      "black",
+      ["v96", "h-192", "v412.8", "h182.4", "v0", "h9.6"]
+    ],
+    ["lcd1:VSS", "uno:GND.2", "black", ["v105.6", "h-48", "v403.2", "h192"]],
+    ["lcd1:VDD", "uno:5V", "red", ["v115.2", "h-47.9", "v384", "h172.8"]],
+    ["lcd1:RS", "uno:2", "green", ["v220.8", "h173.1"]],
+    [
+      "lcd1:RW",
+      "uno:GND.2",
+      "black",
+      ["v76.8", "h-0.1", "v67.2", "h-86.4", "v364.8", "h188.1"]
+    ],
+    ["lcd1:E", "uno:3", "green", ["v211.2", "h144"]],
+    ["lcd1:D5", "uno:5", "green", ["v182.4", "h57.7"]],
+    ["lcd1:D6", "uno:6", "green", ["v172.8", "h57.8"]],
+    ["lcd1:D7", "uno:7", "green", ["v163.2", "h38.7"]],
+    ["lcd1:D4", "uno:4", "green", ["v192", "h86.4"]],
+    ["pot1:GND", "uno:GND.2", "black", ["v96", "h115.2", "v412.8", "h188.1"]],
+    ["pot1:VCC", "uno:5V", "red", ["v134.4", "h104.8", "v364.8", "h172.8"]],
+    ["pot1:SIG", "lcd1:V0", "green", ["v57.6", "h172.4"]],
+    ["ir1:DAT", "uno:A0", "green", ["v172.8", "h307.2"]],
+    ["ir1:GND", "r2:1", "black", ["v0"]],
+    ["r2:2", "uno:GND.2", "black", ["h0", "v66", "h297.6"]],
+    ["ir1:VCC", "uno:5V", "red", ["v153.6", "h278.4"]]
+  ],
+  "dependencies": {}
+}

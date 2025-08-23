@@ -3,7 +3,7 @@
 
 #pragma once
 
-namespace birdy {
+namespace nest {
 
 // Arduino analog pin for infrared receiver.
 constexpr int kIrReceiver = A0;
@@ -14,15 +14,15 @@ constexpr int kTimeInterval = 10000;
 // Sample size for baseline voltage average.
 constexpr int kNumReadings = 10;
 
-// Voltage margin added to baseline to reliably detect message start, filtering
-// out noise.
-constexpr float kVoltageMargin = 0.01f;
+// Voltage margin added to baseline to detect transmission start.
+constexpr float kVoltageMargin = 0.10f;
 
 // Length of each bit sequence;
 constexpr int kBitsPerMessage = 12;
 
-// Duration between each bit received.
-constexpr int kBitRate = 1000;
+// Duration between each bit received - slight offset of 10ms from transmitter
+// due to lag.
+constexpr int kBitRate = 510;
 
 // Number of users of communication system.
 constexpr int kNumberOfUsers = 8;
@@ -32,7 +32,9 @@ constexpr int kMaxCharacters = 128;
 
 // Contains decoded character and sender ID of bit sequence.
 // Example:
-//
+// 		DecodedSequence ds;
+// 		ds.character = 'a'
+//		ds.sender_id = 1
 struct DecodedSequence {
   char character;
   int sender_id;
@@ -50,6 +52,4 @@ void StoreDecodedSequence(int sender_id, char character, int *character_index,
 void EndOfTransmission(char character, int *character_index, bool &recording,
                        LiquidCrystal &lcd,
                        char message_storage[kNumberOfUsers][kMaxCharacters]);
-
-// const char *arr[2][2] = {{"hello", "again"}, {"hello", "again"}};
-} // namespace birdy
+} // namespace nest

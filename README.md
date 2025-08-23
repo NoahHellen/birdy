@@ -1,15 +1,33 @@
-# birdy <img src="figures/birdy.png" align="right" height="138" /></a>
+# birdy <img src="images/birdy.png" align="right" height="138" /></a>
 
-Birdy is an infrared communication system built using Arduino.
+Birdy is an communication system built using Arduino.
 
 ## More information
 
 Birdy is comprised of two components:
 
 - Bird
-	- Handheld device that encodes a message in binary infrared pulses.
+  - Handheld device that encodes a message in binary light pulses.
 - Nest
-	- Microcontroller that decodes the infrared signal.
+  - Microcontroller that decodes the light signal.
+
+## System
+
+This is a photo of the Arduino and ESP setup. It demonstrates a simple example of sending the message "HI" as user 7.
+
+![System](images/system.jpg)
+
+## Bird
+
+Below demonstrates how to set up the Bird – the image previews the contents of [`diagram.json`](bird/diagram.json) located in the [bird](bird) directory.
+
+![Bird](images/bird.png)
+
+## Nest
+
+Below demonstrates how to set up the Nest – the image previews the contents of [`diagram.json`](nest/diagram.json) located in the [nest](nest) directory.
+
+![Nest](images/nest.png)
 
 ## License
 
