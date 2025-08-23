@@ -7,9 +7,9 @@ Birdy is an communication system built using Arduino.
 Birdy is comprised of two components:
 
 - Bird
-  - Handheld device that encodes a message in binary light pulses.
+  - Handheld device (ESP32) that encodes a message in binary light pulses.
 - Nest
-  - Microcontroller that decodes the light signal.
+  - Microcontroller (Arduino UNO R3) that decodes the light signal and displays a message from each user on an LCD screen.
 
 ## System
 
